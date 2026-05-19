@@ -12,16 +12,13 @@ from vastai import (
 
 
 def chat_benchmark_generator() -> dict:
-    """Generate a simple benchmark request for llama.cpp server."""
-    prompt = " ".join(
-        "".join(random.choices(string.ascii_lowercase, k=random.randint(3, 8)))
-        for _ in range(50)
-    )
+    """Generate a lightweight benchmark request (no thinking)."""
     return {
         "model": "qwen36-nudeon",
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 128,
-        "temperature": 0.7,
+        "messages": [{"role": "user", "content": "say ok"}],
+        "max_tokens": 16,
+        "temperature": 0.1,
+        "chat_template_kwargs": {"enable_thinking": False},
     }
 
 
@@ -37,8 +34,8 @@ worker_config = WorkerConfig(
             workload_calculator=lambda p: float(p.get("max_tokens", 512)),
             benchmark_config=BenchmarkConfig(
                 generator=chat_benchmark_generator,
-                runs=4,
-                concurrency=2,
+                runs=1,
+                concurrency=1,
             ),
         ),
         HandlerConfig(
